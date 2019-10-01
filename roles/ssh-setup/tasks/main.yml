@@ -29,3 +29,7 @@
     state: present
     backup: yes
   notify: restart ssh
+- name: restart ssh
+  service:
+    name: sshd
+    state: restarted
