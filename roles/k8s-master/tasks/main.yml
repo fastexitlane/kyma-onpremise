@@ -1,0 +1,51 @@
+---
+# tasks file for k8s-master
+- name: check whether k8s master node is already initialized
+  stat:
+    path: "/etc/kubernetes/pki/ca.key"
+  register: kubeadm_ca
+- name: "initizalize k8s master node"
+  run_once: true
+  when: not kubeadm_ca.stat.exists
+  shell: "kubeadm init --pod-network-cidr={{ pod_network_cidr }}"
+- name: get kubeconfig
+  when: not kubeadm_ca.stat.exists
+  run_once: true
+  fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    flat: yes
+- name: create new kube config
+  when: not kubeadm_ca.stat.exists
+  file:
+    path: /home/ansible/.kube
+    state: directory
+    owner: ansible
+    group: ansible
+- name: copy new kube config
+  when: not kubeadm_ca.stat.exists
+  copy:
+    src: /etc/kubernetes/admin.conf
+    remote_src: true
+    dest: /home/ansible/.kube/config
+- name: adapt config file permissions
+  when: not kubeadm_ca.stat.exists
+  file:
+    path: /home/ansible/.kube/config
+    state: file
+    owner: ansible
+    group: ansible
+- name: initialize helm
+  when: not kubeadm_ca.stat.exists
+  shell: "helm init"
+  become: no
+- name: get join command
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_command
+- name: cache join command
+  become: no
+  local_action: copy content={{ kubeadm_join_command.stdout_lines[0] }} dest=./kubeadm_join_command
+- name: untaint master node
+  become: no
+  when: not kubeadm_ca.stat.exists
+  shell: kubectl taint nodes --all node-role.kubernetes.io/master-

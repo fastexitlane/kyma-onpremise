@@ -1,0 +1,41 @@
+---
+# tasks file for nfs-server
+- name: install nfs utils
+  yum:
+    name: nfs-utils
+    state: present
+- name: create base directory for nfs share
+  file:
+    path: "{{ nfs_basedir }}"
+    state: directory
+    owner: "{{ nfs_owner }}"
+    group: "{{ nfs_group }}"
+    mode: '0777'
+- name: create data directories for nfs share
+  file:
+    path: "{{ nfs_basedir }}/{{ item }}"
+    state: directory
+    owner: "{{ nfs_owner }}"
+    group: "{{ nfs_group }}"
+    mode: '0777'
+  loop: "{{ persistent_volumes }}"
+- name: configure idmap to use domain
+  template:
+    src: templates/idmapd.conf.j2
+    dest: /etc/idmapd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - enable and restart rpcbind
+    - enable and restart nfs-idmap
+    - enable and restart nfs-lock
+- name: configure nfs exports
+  template:
+    src: templates/nfs_exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - enable and restart nfs-server

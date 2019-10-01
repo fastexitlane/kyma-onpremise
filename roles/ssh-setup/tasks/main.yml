@@ -1,0 +1,31 @@
+---
+# tasks file for ssh-setup
+- name: add a new user named ansible
+  user:
+    name: "{{ new_user }}"
+    shell: /bin/bash
+    password: "{{ new_password }}"
+- name: add ansible user to the sudoers
+  copy:
+    dest: "/etc/sudoers.d/{{ new_user }}"
+    content: "{{ new_user }}  ALL=(ALL)  NOPASSWD: ALL"
+- name: deploy SSH keys
+  authorized_key:
+    user: ansible
+    key: "{{ lookup('file', './.ssh/{{ inventory_hostname }}.pub') }}"
+    state: present
+- name: disable SSH password authentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: "PasswordAuthentication no"
+    state: present
+    backup: yes
+- name: disable root login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: "PermitRootLogin no"
+    state: present
+    backup: yes
+  notify: restart ssh

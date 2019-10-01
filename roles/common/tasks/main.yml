@@ -1,0 +1,60 @@
+---
+# tasks file for common
+- name: install epel repo
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$releasever
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+    exclude: "{{ yum_update_exclude }}"
+- name: install basic packages
+  yum:
+    name:
+    - vim
+    - zip
+    - unzip
+    - wget
+    - curl
+    - bash-completion
+    - bash-completion-extras
+    - bind-utils
+    - nfs-utils
+    - certbot
+    - yum-utils
+    - net-tools
+    state: present
+- name: disable firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+- name: disable SELinux
+  selinux:
+    state: disabled
+- name: disable swap
+  replace:
+    path: /etc/fstab
+    regexp: '.* swap.*'
+    replace: '#\1'
+- name: add br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+- name: configure ip tables for ipv4
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: configure ip tables for ipv6
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes

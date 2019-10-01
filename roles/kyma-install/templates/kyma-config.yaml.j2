@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kyma-installer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: owndomain-overrides
+  namespace: kyma-installer
+  labels:
+    installer: overrides
+data:
+  global.tlsCrt: "{{ kyma_tls_cert }}"
+  global.tlsKey: "{{ kyma_tls_key }}"
+  global.domainName: "{{ kyma_domain_name }}"

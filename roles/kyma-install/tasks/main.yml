@@ -1,0 +1,46 @@
+---
+# tasks file for kyma-install
+- name: create directory for cluster config files
+  file:
+    path: "{{ cluster_config_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+- name: create metallb config file
+  template:
+    src: templates/metallb-config.yaml.j2
+    dest: "{{ cluster_config_dir }}/metallb-config.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644' 
+- name: create persistent volume config file
+  template:
+    src: templates/persistent-volumes.yaml.j2
+    dest: "{{ cluster_config_dir }}/persistent-volumes.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+- name: create kyma config file
+  template:
+    src: templates/kyma-config.yaml.j2
+    dest: "{{ cluster_config_dir }}/kyma-config.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+- name: deploy flannel
+  shell: "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+- name: deploy metallb
+  shell: "kubectl apply -f https://raw.githubusercontent.com/google/metallb/v{{ metallb_version }}/manifests/metallb.yaml"
+- name: configure metallb
+  shell: "kubectl apply -f {{ cluster_config_dir }}/metallb-config.yaml"
+- name: configure persistent volumes
+  shell: "kubectl apply -f {{ cluster_config_dir }}/persistent-volumes.yaml"
+- pause:
+    prompt: waiting for metallb and flannel to initialize - check back the initial config (press enter to continue...)
+- name: deploy tiller
+  shell: "kubectl apply -f https://raw.githubusercontent.com/kyma-project/kyma/{{ kyma_version }}/installation/resources/tiller.yaml"
+- name: prepare and configure kyma installation
+  shell: "kubectl apply -f /home/ansible/cluster_config/kyma-config.yaml"
+- name: deploy kyma installer
+  shell: "kubectl apply -f https://github.com/kyma-project/kyma/releases/download/{{ kyma_version }}/kyma-installer-cluster.yaml"

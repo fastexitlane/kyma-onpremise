@@ -1,0 +1,4 @@
+{% for pv in persistent_volumes %}
+{{ nfs_basedir}}/{{ pv }} {% for ip in metallb_loadbalancing_ips %}{{ ip }}(rw,sync,no_root_squash,no_all_squash) {% endfor %}
+
+{% endfor %}

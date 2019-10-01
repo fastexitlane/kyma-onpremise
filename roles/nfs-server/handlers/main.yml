@@ -1,0 +1,26 @@
+---
+# handlers file for nfs-server
+- name: enable and restart rpcbind
+  systemd:
+    name: rpcbind
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+- name: enable and restart nfs-server
+  systemd:
+    name: nfs-server
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+- name: enable and restart nfs-lock
+  systemd:
+    name: nfs-lock
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+- name: enable and restart nfs-idmap
+  systemd:
+    name: nfs-idmap
+    enabled: yes
+    daemon_reload: yes
+    state: restarted

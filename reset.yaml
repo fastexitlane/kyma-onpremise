@@ -1,0 +1,29 @@
+---
+- name: reset cluster
+  hosts: all
+  become: yes
+  roles:
+    - role: k8s-reset
+
+- name: cleanup k8s master node
+  hosts: kyma-master
+  become: no
+  tasks:
+    - name: delete old kube config
+      file:
+        path: /home/ansible/.kube
+        state: absent
+    - name: delete cluster initial config files
+      file:
+        path: "{{ cluster_config_dir }}"
+        state: absent
+
+- name: cleanup nfs share
+  hosts: kyma-master
+  become: yes
+  tasks:
+    - name: delete data directories from nfs share
+      file:
+        path: "{{ nfs_basedir }}/{{ item }}"
+        state: absent
+      loop: "{{ persistent_volumes }}"

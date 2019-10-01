@@ -1,0 +1,51 @@
+---
+# tasks file for k8s-install
+- name: download helm
+  get_url:
+    url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    dest: /tmp
+    mode: 0777
+- name: untar helm
+  unarchive:
+    src: "/tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    remote_src: yes
+    dest: /tmp/
+- name: move helm to PATH
+  copy:
+    src: /tmp/linux-amd64/helm
+    remote_src: yes
+    dest: /usr/local/bin/helm
+    mode: 0777
+- name: add docker repo
+  yum_repository:
+    name: docker-ce
+    description: Docker CE
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+- name: add kubernetes repo
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el$releasever-$basearch
+    gpgkey:
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+- name: install docker-ce
+  yum:
+    name: "docker-ce-{{ docker_version }}"
+    state: present
+  notify: enable and restart docker daemon
+- name: install kubernetes
+  yum:
+    name:
+      - "kubelet-{{ k8s_version }}"
+      - "kubeadm-{{ k8s_version }}"
+      - "kubectl-{{ k8s_version }}"
+    state: present
+  notify: enable and start kubelet
+- name: change docker cgroup driver to systemd
+  replace:
+    path: /usr/lib/systemd/system/docker.service
+    regexp: '(^(ExecStart)((?!--exec-opt native.cgroupdriver=systemd).)*$)'
+    replace: '\g<1> --exec-opt native.cgroupdriver=systemd'
+  notify: enable and restart docker daemon

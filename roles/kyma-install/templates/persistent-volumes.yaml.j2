@@ -1,0 +1,20 @@
+{% for pv in persistent_volumes %}
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ pv }}"
+  namespace: kyma-system
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "{{ nfs_domain_name }}"
+    path: "{{ nfs_basedir }}/{{ pv }}"
+    readOnly: false
+{% endfor %}

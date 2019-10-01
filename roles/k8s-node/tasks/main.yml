@@ -1,0 +1,9 @@
+---
+# tasks file for k8s-node
+- name: check whether k8s node is already initialized
+  stat:
+    path: "/etc/kubernetes/pki/ca.crt"
+  register: kubeadm_crt
+- name: join master node
+  when: not kubeadm_crt.stat.exists
+  shell: "{{ lookup('file', './kubeadm_join_command') }}"

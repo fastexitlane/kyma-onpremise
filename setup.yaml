@@ -1,0 +1,30 @@
+- name: install common packages and k8s packages on all hosts
+  hosts: all
+  become: yes
+  roles:
+    - role: common
+    - role: k8s-install
+
+- name: setup nfs server
+  hosts: kyma-master
+  become: yes
+  roles:
+    - role: nfs-server
+
+- name: initialize k8s cluster
+  hosts: kyma-master
+  become: yes
+  roles:
+    - role: k8s-master
+
+- name: join nodes to cluster
+  hosts: kyma-nodes
+  become: yes
+  roles:
+    - role: k8s-node
+
+- name: deploy kyma to cluster
+  hosts: kyma-master
+  become: no
+  roles:
+    - role: kyma-install

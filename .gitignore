@@ -1,0 +1,5 @@
+!.gitignore
+
+*.retry
+kubeadm_join_command
+kubeconfig
