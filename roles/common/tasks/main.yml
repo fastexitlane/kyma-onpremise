@@ -32,14 +32,18 @@
     name: firewalld
     enabled: no
     state: stopped
+  ignore_errors: yes
 - name: disable SELinux
   selinux:
     state: disabled
-- name: disable swap
+  ignore_errors: yes
+- name: disable swap at runtime
+  shell: "swapoff -a"
+- name: disable swap in fstab
   replace:
     path: /etc/fstab
-    regexp: '.* swap.*'
-    replace: '#\1'
+    regexp: '(.* swap.*)'
+    replace: '# \1'
 - name: add br_netfilter kernel module
   modprobe:
     name: br_netfilter
