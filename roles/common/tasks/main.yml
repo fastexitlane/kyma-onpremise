@@ -42,7 +42,7 @@
 - name: disable swap in fstab
   replace:
     path: /etc/fstab
-    regexp: '(.* swap.*)'
+    regexp: '(^(?!#.*$)(.* swap .*))'
     replace: '# \1'
 - name: add br_netfilter kernel module
   modprobe:
