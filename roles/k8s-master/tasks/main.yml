@@ -13,28 +13,24 @@
   run_once: true
   fetch:
     src: /etc/kubernetes/admin.conf
-    dest: ~/.kube/config
+    dest: ./kubeconfig
     flat: yes
 - name: create new kube config
   when: not kubeadm_ca.stat.exists
   file:
-    path: /home/ansible/.kube
+    path: /home/{{ ansible_user }}/.kube
     state: directory
-    owner: ansible
-    group: ansible
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: copy new kube config
   when: not kubeadm_ca.stat.exists
   copy:
     src: /etc/kubernetes/admin.conf
     remote_src: true
-    dest: /home/ansible/.kube/config
-- name: adapt config file permissions
-  when: not kubeadm_ca.stat.exists
-  file:
-    path: /home/ansible/.kube/config
-    state: file
-    owner: ansible
-    group: ansible
+    dest: /home/{{ ansible_user }}/.kube/config
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
 - name: initialize helm
   when: not kubeadm_ca.stat.exists
   shell: "helm init"

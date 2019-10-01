@@ -11,7 +11,7 @@
   tasks:
     - name: delete old kube config
       file:
-        path: /home/ansible/.kube
+        path: /home/{{ ansible_user }}/.kube
         state: absent
     - name: delete cluster initial config files
       file:

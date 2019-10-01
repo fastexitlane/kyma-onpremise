@@ -41,6 +41,6 @@
 - name: deploy tiller
   shell: "kubectl apply -f https://raw.githubusercontent.com/kyma-project/kyma/{{ kyma_version }}/installation/resources/tiller.yaml"
 - name: prepare and configure kyma installation
-  shell: "kubectl apply -f /home/ansible/cluster_config/kyma-config.yaml"
+  shell: "kubectl apply -f {{ cluster_config_dir }}/kyma-config.yaml"
 - name: deploy kyma installer
   shell: "kubectl apply -f https://github.com/kyma-project/kyma/releases/download/{{ kyma_version }}/kyma-installer-cluster.yaml"
