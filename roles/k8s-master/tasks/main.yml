@@ -40,6 +40,9 @@
   when: not kubeadm_ca.stat.exists
   shell: "helm init"
   become: no
+  environment:
+    http_proxy: "{{ env_http_proxy }}"
+    https_proxy: "{{ env_http_proxy }}"
 - name: get join command
   shell: kubeadm token create --print-join-command
   register: kubeadm_join_command
