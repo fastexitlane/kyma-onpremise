@@ -31,4 +31,6 @@
 - name: reboot cluster
   hosts: all
   become: yes
-  reboot:
+  tasks:
+    - name: reboot
+      reboot:
