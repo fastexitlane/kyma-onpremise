@@ -28,7 +28,6 @@
     line: "PermitRootLogin no"
     state: present
     backup: yes
-  notify: restart ssh
 - name: restart ssh
   service:
     name: sshd
