@@ -27,3 +27,8 @@
         path: "{{ nfs_basedir }}/{{ item }}"
         state: absent
       loop: "{{ persistent_volumes }}"
+
+- name: reboot cluster
+  hosts: all
+  become: yes
+  reboot:
