@@ -37,9 +37,17 @@
 - name: configure persistent volumes
   shell: "kubectl apply -f {{ cluster_config_dir }}/persistent-volumes.yaml"
 - pause:
-    prompt: waiting for metallb and flannel to initialize - check back the initial config (press enter to continue...)
+    prompt: waiting for metallb and flannel to initialize (press enter to continue...)
 - name: deploy tiller
   shell: "kubectl apply -f https://raw.githubusercontent.com/kyma-project/kyma/{{ kyma_version }}/installation/resources/tiller.yaml"
+- pause:
+    prompt: waiting for tiller to initialize (press enter to continue...)
+- name: setup helm ca cert
+  shell: kubectl get -n kyma-installer secret helm-secret -o jsonpath="{.data['global\.helm\.ca\.crt']}" | base64 --decode > "$(helm home)/ca.pem";
+- name: setup helm tls cert
+  shell: kubectl get -n kyma-installer secret helm-secret -o jsonpath="{.data['global\.helm\.tls\.crt']}" | base64 --decode > "$(helm home)/cert.pem";
+- name: setup helm tls key
+  shell: kubectl get -n kyma-installer secret helm-secret -o jsonpath="{.data['global\.helm\.tls\.key']}" | base64 --decode > "$(helm home)/key.pem";
 - name: prepare and configure kyma installation
   shell: "kubectl apply -f {{ cluster_config_dir }}/kyma-config.yaml"
 - name: deploy kyma installer
