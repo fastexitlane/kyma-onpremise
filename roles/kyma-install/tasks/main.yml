@@ -50,5 +50,7 @@
   shell: kubectl get -n kyma-installer secret helm-secret -o jsonpath="{.data['global\.helm\.tls\.key']}" | base64 --decode > "$(helm home)/key.pem";
 - name: prepare and configure kyma installation
   shell: "kubectl apply -f {{ cluster_config_dir }}/kyma-config.yaml"
+- pause:
+    prompt: press enter to start kyma installation...
 - name: deploy kyma installer
   shell: "kubectl apply -f https://github.com/kyma-project/kyma/releases/download/{{ kyma_version }}/kyma-installer-cluster.yaml"
