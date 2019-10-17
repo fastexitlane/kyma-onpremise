@@ -6,6 +6,7 @@ metallb_version: 0.8.1
 yum_update_exclude: docker-ce, kube*
 
 pod_network_cidr: 10.244.0.0/16
+service_cidr: 10.96.0.0/12
 metallb_loadbalancing_ips:
   - 
 persistent_volumes:

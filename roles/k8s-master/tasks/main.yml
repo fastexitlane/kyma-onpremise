@@ -7,7 +7,7 @@
 - name: "initizalize k8s master node"
   run_once: true
   when: not kubeadm_ca.stat.exists
-  shell: "kubeadm init --pod-network-cidr={{ pod_network_cidr }}"
+  shell: "kubeadm init --pod-network-cidr={{ pod_network_cidr }} --service-cidr={{ service_cidr }}"
   register: kubeadm_init_stdout
 - name: debug output of kubeadm init
   when: not kubeadm_ca.stat.exists
