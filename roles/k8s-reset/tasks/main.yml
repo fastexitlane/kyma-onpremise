@@ -41,15 +41,15 @@
 - name: delete flannel net interface
   command: "ip link delete flannel.1"
   ignore_errors: yes
-- name: enable and restart docker daemon
-  systemd:
-    name: docker
-    enabled: yes
-    daemon_reload: yes
-    state: restarted
-- name: enable and start kubelet
+- name: stop kubelet
   systemd:
     name: kubelet
     enabled: yes
     daemon_reload: yes
-    state: restarted
+    state: stopped
+- name: stop docker daemon
+  systemd:
+    name: docker
+    enabled: yes
+    daemon_reload: yes
+    state: stopped

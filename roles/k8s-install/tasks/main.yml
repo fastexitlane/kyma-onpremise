@@ -42,7 +42,7 @@
       - "kubeadm-{{ k8s_version }}"
       - "kubectl-{{ k8s_version }}"
     state: present
-  notify: enable and start kubelet
+  notify: enable and restart kubelet
 - name: change docker cgroup driver to systemd
   replace:
     path: /usr/lib/systemd/system/docker.service
