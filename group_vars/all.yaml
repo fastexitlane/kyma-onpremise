@@ -31,3 +31,5 @@ cluster_config_dir: "/home/{{ ansible_user }}/cluster_config"
 kyma_domain_name: ""
 kyma_tls_key: ""
 kyma_tls_cert: ""
+
+env_http_proxy: ""
