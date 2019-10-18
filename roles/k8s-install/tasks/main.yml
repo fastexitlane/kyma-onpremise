@@ -8,6 +8,7 @@
   environment:
     http_proxy: "{{ env_http_proxy }}"
     https_proxy: "{{ env_http_proxy }}"
+    no_proxy: "{{ http_no_proxy }}"
 - name: untar helm
   unarchive:
     src: "/tmp/helm-v{{ helm_version }}-linux-amd64.tar.gz"

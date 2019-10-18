@@ -28,3 +28,7 @@
   become: no
   roles:
     - role: kyma-install
+  environment:
+    http_proxy: "{{ env_http_proxy }}"
+    https_proxy: "{{ env_http_proxy }}"
+    no_proxy: "{{ http_no_proxy }}"

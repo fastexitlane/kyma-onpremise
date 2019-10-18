@@ -33,3 +33,4 @@ kyma_tls_key: ""
 kyma_tls_cert: ""
 
 env_http_proxy: ""
+http_no_proxy: ""
