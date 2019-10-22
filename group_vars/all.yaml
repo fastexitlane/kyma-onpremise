@@ -1,4 +1,4 @@
-kyma_version: 1.5.0
+kyma_version: 1.6.0
 k8s_version: 1.15.3
 helm_version: 2.10.0
 docker_version: 18.09.9
@@ -20,6 +20,16 @@ persistent_volumes:
   - data-8
   - data-9
   - data-10
+  - data-11
+  - data-12
+  - data-13
+  - data-14
+  - data-15
+  - data-16
+  - data-17
+  - data-18
+  - data-19
+  - data-20
 
 nfs_basedir: "/var/nfsshare"
 nfs_owner: "nfsnobody"
