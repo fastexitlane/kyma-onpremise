@@ -42,9 +42,7 @@
   command: "ip link delete flannel.1"
   ignore_errors: yes
 - name: reboot cluster
-  tasks:
-    - name: reboot
-      reboot:
+  reboot:
 - name: stop kubelet
   systemd:
     name: kubelet
